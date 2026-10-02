@@ -1,0 +1,36 @@
+name: macOS build and tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check public content
+        run: |
+          python3 scripts/check_public.py --self-test
+          python3 scripts/check_public.py
+      - name: Test
+        run: zsh test.sh
+      - name: Build and sign
+        run: zsh build.sh
+      - name: Upload app archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: macOS-${{ runner.arch }}
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 14

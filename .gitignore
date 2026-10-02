@@ -1,0 +1,15 @@
+.build/
+.swiftpm/
+.DS_Store
+.build-release/
+dist/
+work/
+*.app/
+*.zip
+*.log
+*.jsonl
+.env
+.env.*
+auth.json
+*.pem
+*.key
